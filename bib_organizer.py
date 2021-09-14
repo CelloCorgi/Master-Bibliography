@@ -38,7 +38,7 @@ def bibCleanUp(inBib, toLower=True, fixLables=True, checkDuplicates=True, alphab
     """
 
     if fixLables:
-        fixed_entry_lables = ((''.join(inBib.entries[key].persons['author'][0].last_names).translate({ ord(c): None for c in "\{/},:'-.\"" }) + #Gets the first author's last name
+        fixed_entry_lables = ((''.join(''.join(inBib.entries[key].persons['author'][0].last_names).split()).translate({ ord(c): None for c in "\{/},:'-.\"" }) + #Gets the first author's last name
                                     str(inBib.entries[key].fields['year']).translate({ ord(c): None for c in "\{/},:'-.\"" }) + # Gets the year of the paper
                                     ''.join(string.capwords(inBib.entries[key].fields['title'].translate({ ord(c): None for c in "\{/},:'-.\"" }).strip().lower()).split()[:2] # Gets first two words of the paper
                                 ), entry) for key, entry in inBib.entries.items())
@@ -79,7 +79,7 @@ def bibPrinter(inBib, outFile):
 
 if __name__ == "__main__":
     
-    my_bib = bibLoader('endres_bib.bib')
+    my_bib = bibLoader('endres_bib_living.bib')
     new_bib = bibCleanUp(my_bib, toLower=False, fixLables=True, alphabetize=True)
     bibPrinter(new_bib, 'endres_bib_living.bib')
 
