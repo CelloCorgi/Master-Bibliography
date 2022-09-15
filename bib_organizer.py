@@ -34,13 +34,19 @@ def bibCleanUp(inBib, toLower=True, fixLables=True, checkDuplicates=True, alphab
     """
     This file cleans up the bib as needed
     toLower: converts all field labels to lower case - RECOMMENDED
-    fixLables: Turns all lables to firstAuthorLastName_year_firstTwoWordsOfTitle 
+    fixLables: Turns all labels to firstAuthorLastName_year_firstTwoWordsOfTitle 
     """
 
-    if fixLables:
-        fixed_entry_lables = ((''.join(''.join(inBib.entries[key].persons['author'][0].last_names).split()).translate({ ord(c): None for c in "\{/},:'-.\"" }) + #Gets the first author's last name
+    for key, entry in inBib.entries.items():
+        print(''.join(''.join(inBib.entries[key].persons['author'][0].last_names).split()).translate({ ord(c): None for c in "\{/},:'-.\"" }) + #Gets the first author's last name
                                     str(inBib.entries[key].fields['year']).translate({ ord(c): None for c in "\{/},:'-.\"" }) + # Gets the year of the paper
                                     ''.join(string.capwords(inBib.entries[key].fields['title'].translate({ ord(c): None for c in "\{/},:'-.\"" }).strip().lower()).split()[:2] # Gets first two words of the paper
+                                ), entry)
+
+    if fixLables:
+        fixed_entry_lables = ((''.join(''.join(inBib.entries[key].persons['author'][0].last_names).split()).translate({ ord(c): None for c in "\{/},:'-.\"()" }) + #Gets the first author's last name
+                                    str(inBib.entries[key].fields['year']).translate({ ord(c): None for c in "\{/},:'-.\"()" }) + # Gets the year of the paper
+                                    ''.join(string.capwords(inBib.entries[key].fields['title'].translate({ ord(c): None for c in "\{/},:'-.\"()" }).strip().lower()).split()[:2] # Gets first two words of the paper
                                 ), entry) for key, entry in inBib.entries.items())
         inBib = BibliographyData(
             entries=fixed_entry_lables,
@@ -48,6 +54,8 @@ def bibCleanUp(inBib, toLower=True, fixLables=True, checkDuplicates=True, alphab
             wanted_entries=inBib.wanted_entries,
             min_crossrefs=inBib.min_crossrefs,
         )
+
+
 
     if toLower: 
         inBib = inBib.lower()
